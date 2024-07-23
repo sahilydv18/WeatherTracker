@@ -13,32 +13,26 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import com.example.weathertracker.permissionmanager.LocationPermissionLauncher
-import com.example.weathertracker.permissionmanager.LocationUtils
+import com.example.weathertracker.ui.HomeScreen
 import com.example.weathertracker.ui.theme.WeatherTrackerTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        val locationUtils = LocationUtils(this)
         setContent {
             WeatherTrackerTheme {
                 val context = LocalContext.current
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Column(
-                        modifier = Modifier.padding(innerPadding).fillMaxSize()
+                        modifier = Modifier
+                            .padding(innerPadding)
+                            .fillMaxSize()
                     ) {
-                        if (locationUtils.isLocationPermissionGranted()) {
-
-                        } else {
-                            LocationPermissionLauncher(
-                                context = context,
-                                goToAppSetting = {
-                                    goToAppSettings()
-                                }
-                            )
-                        }
+                        HomeScreen(
+                            context = context,
+                            goToAppSettings = { goToAppSettings() }
+                        )
                     }
                 }
             }

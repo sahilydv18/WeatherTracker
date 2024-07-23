@@ -1,4 +1,4 @@
-package com.example.weathertracker.permissionmanager
+package com.example.weathertracker.permissionlauncher
 
 import android.Manifest
 import android.content.Context
@@ -18,7 +18,8 @@ import com.example.weathertracker.R
 @Composable
 fun LocationPermissionLauncher(
     context: Context,
-    goToAppSetting: () -> Unit
+    goToAppSetting: () -> Unit,
+    getLocationUpdates: () -> Unit
 ) {
     // variable for showing rationale dialog, used when the user declines permission for the first time
     var showRationaleDialog by rememberSaveable {
@@ -35,6 +36,7 @@ fun LocationPermissionLauncher(
         rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestMultiplePermissions()) { permission ->
             if (permission[Manifest.permission.ACCESS_FINE_LOCATION] == true && permission[Manifest.permission.ACCESS_COARSE_LOCATION] == true) {
                 // Get location updates
+                getLocationUpdates()
             } else {
                 // Handling the case when the user declines to give permission
                 val rationaleRequired = ActivityCompat.shouldShowRequestPermissionRationale(

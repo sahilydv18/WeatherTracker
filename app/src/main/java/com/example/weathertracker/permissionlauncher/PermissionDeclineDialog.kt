@@ -1,4 +1,4 @@
-package com.example.weathertracker.permissionmanager
+package com.example.weathertracker.permissionlauncher
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
