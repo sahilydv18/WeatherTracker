@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Weather Tracker</string>
+    <string name="alert_dialog_title">Permission Required</string>
+    <string name="permission_reason">We need your location permission so that we can show you weather information.</string>
+    <string name="ok">OK</string>
+    <string name="setting_reason">It seems you permanently declined location permission. You can go to app settings to grant it.</string>
+    <string name="go_to_setting">Grant Permission</string>
 </resources>
