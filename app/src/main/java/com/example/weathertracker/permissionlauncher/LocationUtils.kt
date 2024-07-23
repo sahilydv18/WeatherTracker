@@ -14,6 +14,7 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
+import java.util.Locale
 import javax.inject.Inject
 
 class LocationUtils @Inject constructor(
@@ -29,7 +30,9 @@ class LocationUtils @Inject constructor(
             override fun onLocationResult(newLocation: LocationResult) {
                 super.onLocationResult(newLocation)
                 newLocation.lastLocation?.let {
-                    val newLocationData = Location(latitude = it.latitude, longitude = it.longitude)
+                    val roundedLat = String.format(Locale.getDefault(), "%.3f", it.latitude).toDouble()
+                    val roundedLong = String.format(Locale.getDefault(), "%.3f", it.longitude).toDouble()
+                    val newLocationData = Location(latitude = roundedLat, longitude = roundedLong)
                     Log.d("Updating Location", newLocationData.toString())
                     locationViewModel.updateLocation(newLocationData)
                 }
