@@ -13,9 +13,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import com.example.weathertracker.permissionlauncher.LocationUtils
 import com.example.weathertracker.ui.HomeScreen
 import com.example.weathertracker.ui.theme.WeatherTrackerTheme
 
+//@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,6 +25,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             WeatherTrackerTheme {
                 val context = LocalContext.current
+                val locationUtils = LocationUtils(context)
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Column(
                         modifier = Modifier
@@ -31,7 +34,8 @@ class MainActivity : ComponentActivity() {
                     ) {
                         HomeScreen(
                             context = context,
-                            goToAppSettings = { goToAppSettings() }
+                            goToAppSettings = { goToAppSettings() },
+                            locationUtils = locationUtils
                         )
                     }
                 }
