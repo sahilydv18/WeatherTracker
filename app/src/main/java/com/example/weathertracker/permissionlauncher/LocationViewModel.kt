@@ -11,8 +11,9 @@ class LocationViewModel: ViewModel() {
     private val _location = MutableStateFlow(LocationUi())
     val location = _location.asStateFlow()
 
-    fun updateLocation(location: Location) {
+    fun updateLocation(location: MutableList<Location>) {
         _location.update {
+            //Log.d("ListSize",location.size.toString())
             it.copy(
                 locationData = location
             )
@@ -22,5 +23,5 @@ class LocationViewModel: ViewModel() {
 
 // data class to store location data and give it to our api
 data class LocationUi(
-    val locationData: Location? = null
+    val locationData: MutableList<Location> = mutableListOf()
 )

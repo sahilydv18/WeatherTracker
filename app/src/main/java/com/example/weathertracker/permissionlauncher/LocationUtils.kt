@@ -5,7 +5,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Looper
-import android.util.Log
 import androidx.core.content.ContextCompat
 import com.example.weathertracker.permissionlauncher.data.Location
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -14,6 +13,7 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
+import kotlinx.coroutines.delay
 import java.util.Locale
 import javax.inject.Inject
 
@@ -23,9 +23,11 @@ class LocationUtils @Inject constructor(
     // It will be used to get location data
     private val _fusedLocationClient: FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context)
 
+    val locationList: MutableList<Location> = mutableListOf()
+
     // function to request for location update using the FusedLocationProviderClient
     @SuppressLint("MissingPermission")
-    fun updateLocation(locationViewModel: LocationViewModel) {
+    suspend fun updateLocation(locationViewModel: LocationViewModel) {
         val locationCallback = object : LocationCallback() {
             override fun onLocationResult(newLocation: LocationResult) {
                 super.onLocationResult(newLocation)
@@ -33,16 +35,26 @@ class LocationUtils @Inject constructor(
                     val roundedLat = String.format(Locale.getDefault(), "%.3f", it.latitude).toDouble()
                     val roundedLong = String.format(Locale.getDefault(), "%.3f", it.longitude).toDouble()
                     val newLocationData = Location(latitude = roundedLat, longitude = roundedLong)
-                    Log.d("Updating Location", newLocationData.toString())
-                    locationViewModel.updateLocation(newLocationData)
+                    //Log.d("Updating Location", newLocationData.toString())
+                    locationList.add(newLocationData)
+                    //Log.d("AddToList", "Done")
+                    if (locationList.size > 1) {
+                        locationViewModel.updateLocation(locationList)
+                    }
+                    //locationViewModel.updateLocation(newLocationData)
                 }
             }
         }
 
         // requesting for location
-        val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 10000).build()
+        val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 1000).build()
 
         _fusedLocationClient.requestLocationUpdates(locationRequest,locationCallback, Looper.getMainLooper())
+
+        delay(6000)
+        //Log.d("Delay","This should stop it for 6 s")
+
+        _fusedLocationClient.removeLocationUpdates(locationCallback)
     }
 
     // function to check if the user has given location permission or not

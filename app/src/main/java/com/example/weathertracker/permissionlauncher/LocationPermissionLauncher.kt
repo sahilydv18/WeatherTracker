@@ -35,7 +35,8 @@ fun LocationPermissionLauncher(
     val locationPermissionLauncher =
         rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestMultiplePermissions()) { permission ->
             if (permission[Manifest.permission.ACCESS_FINE_LOCATION] == true && permission[Manifest.permission.ACCESS_COARSE_LOCATION] == true) {
-                // Get location updates
+                // This will run when at the start of the app we don't have permission and we are asking for it and the user gives us permission
+                // so after getting permission we will run this code so that the user doesn't need to restart the app to see changes
                 getLocationUpdates()
             } else {
                 // Handling the case when the user declines to give permission
