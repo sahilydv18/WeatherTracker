@@ -1,4 +1,4 @@
-package com.example.weathertracker.ui
+package com.example.weathertracker.ui.screen
 
 import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
@@ -12,11 +12,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.weathertracker.BuildConfig
 import com.example.weathertracker.permissionlauncher.LocationPermissionLauncher
 import com.example.weathertracker.permissionlauncher.LocationUi
 import com.example.weathertracker.permissionlauncher.LocationUtils
 import com.example.weathertracker.permissionlauncher.LocationViewModel
+import com.example.weathertracker.ui.viewmodel.WeatherViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -26,8 +27,9 @@ import kotlinx.coroutines.launch
 fun HomeScreen(
     context: Context,
     goToAppSettings: () -> Unit,
-    locationViewModel: LocationViewModel = viewModel(),
-    locationUtils: LocationUtils
+    locationViewModel: LocationViewModel,
+    locationUtils: LocationUtils,
+    weatherViewModel: WeatherViewModel
 ) {
     val location: LocationUi by locationViewModel.location.collectAsState()
 
@@ -38,6 +40,9 @@ fun HomeScreen(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            val latAndLong = "${location.locationData[1].latitude},${location.locationData[1].longitude}"
+            val result = weatherViewModel.getWeatherData(BuildConfig.API_KEY, latAndLong)
+            Text(text = result)
             Text(text = "${location.locationData[1].latitude}")
             Text(text = "${location.locationData[1].longitude}")
         }
