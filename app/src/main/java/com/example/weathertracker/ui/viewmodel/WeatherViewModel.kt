@@ -1,6 +1,5 @@
 package com.example.weathertracker.ui.viewmodel
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -10,28 +9,26 @@ import com.example.weathertracker.remote.repository.WeatherRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.io.IOException
 import javax.inject.Inject
 
 @HiltViewModel
 class WeatherViewModel @Inject constructor(
-    private val weatherRepo: WeatherRepo
+    private val weatherRepo: WeatherRepo,
 ): ViewModel() {
+    // ui state to show data on UI
+    var weatherUiState: WeatherUiState by mutableStateOf(WeatherUiState.Loading)
+        private set
 
-    private var _weatherUiState: WeatherUiState by mutableStateOf(WeatherUiState.Loading)
-    val weatherUiState = _weatherUiState
-
-    fun getWeatherData(apiKey: String, latAndLong: String): String {
-        var string = ""
+    fun getWeatherData(apiKey: String, latAndLong: String) {
+        // getting weather data on background(IO) thread
         viewModelScope.launch(Dispatchers.IO) {
-//            _weatherUiState = try {
-//                val weatherData = weatherRepo.getWeatherDate(apiKey,latAndLong)
-//                WeatherUiState.Success(weatherData.toString())
-//            } catch (e: IOException) {
-//                WeatherUiState.Error
-//            }
-            string = weatherRepo.getWeatherDate(apiKey,latAndLong,"yes").toString()
-            Log.d("ApiResponse",string)
+            weatherUiState = try {
+                val weatherData = weatherRepo.getWeatherData(apiKey,latAndLong,"no")
+                WeatherUiState.Success(weatherData)
+            } catch (e: IOException) {
+                WeatherUiState.Error
+            }
         }
-        return string
     }
 }

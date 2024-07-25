@@ -5,4 +5,11 @@
     <string name="ok">OK</string>
     <string name="setting_reason">It seems you permanently declined location permission. You can go to app settings to grant it.</string>
     <string name="go_to_setting">Grant Permission</string>
+    <string name="degree_celcius">\u00b0C</string>
+    <string name="date">Date</string>
+    <string name="real_feel">Real feel</string>
+    <string name="uv">UV</string>
+    <string name="mm">" mm"</string>
+    <string name="percentage">%</string>
+    <string name="km_per_h">" km/h"</string>
 </resources>

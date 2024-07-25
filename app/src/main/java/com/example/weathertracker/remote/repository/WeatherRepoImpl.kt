@@ -7,7 +7,7 @@ import javax.inject.Inject
 class WeatherRepoImpl @Inject constructor(
     private val weatherApi: WeatherApi
 ): WeatherRepo {
-    override suspend fun getWeatherDate(
+    override suspend fun getWeatherData(
         apiKey: String,
         latAndLong: String,
         aqi: String
