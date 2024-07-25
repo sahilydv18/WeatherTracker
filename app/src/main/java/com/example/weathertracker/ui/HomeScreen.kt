@@ -12,6 +12,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.weathertracker.permissionlauncher.LocationPermissionLauncher
 import com.example.weathertracker.permissionlauncher.LocationUi
 import com.example.weathertracker.permissionlauncher.LocationUtils
@@ -25,7 +26,7 @@ import kotlinx.coroutines.launch
 fun HomeScreen(
     context: Context,
     goToAppSettings: () -> Unit,
-    locationViewModel: LocationViewModel,
+    locationViewModel: LocationViewModel = viewModel(),
     locationUtils: LocationUtils
 ) {
     val location: LocationUi by locationViewModel.location.collectAsState()
