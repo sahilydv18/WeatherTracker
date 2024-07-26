@@ -12,6 +12,10 @@ import kotlinx.coroutines.launch
 import java.io.IOException
 import javax.inject.Inject
 
+private const val DAYS = 3;
+private const val AQI = "no";
+private const val ALERTS = "no";
+
 @HiltViewModel
 class WeatherViewModel @Inject constructor(
     private val weatherRepo: WeatherRepo,
@@ -24,7 +28,7 @@ class WeatherViewModel @Inject constructor(
         // getting weather data on background(IO) thread
         viewModelScope.launch(Dispatchers.IO) {
             weatherUiState = try {
-                val weatherData = weatherRepo.getWeatherData(apiKey,latAndLong,"no")
+                val weatherData = weatherRepo.getWeatherData(apiKey,latAndLong, DAYS, AQI, ALERTS)
                 WeatherUiState.Success(weatherData)
             } catch (e: IOException) {
                 WeatherUiState.Error

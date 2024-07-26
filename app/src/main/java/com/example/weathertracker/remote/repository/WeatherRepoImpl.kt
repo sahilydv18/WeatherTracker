@@ -10,8 +10,16 @@ class WeatherRepoImpl @Inject constructor(
     override suspend fun getWeatherData(
         apiKey: String,
         latAndLong: String,
-        aqi: String
+        days: Int,
+        aqi: String,
+        alerts: String
     ): WeatherData {
-        return weatherApi.getWeatherData(apiKey,latAndLong,aqi)
+        return weatherApi.getWeatherData(
+            apiKey,
+            latAndLong,
+            days,
+            aqi,
+            alerts
+        )
     }
 }

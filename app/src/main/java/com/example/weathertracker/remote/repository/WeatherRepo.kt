@@ -6,6 +6,8 @@ interface WeatherRepo {
     suspend fun getWeatherData(
         apiKey: String,
         latAndLong: String,
-        aqi: String
+        days: Int,
+        aqi: String,
+        alerts: String
     ): WeatherData
 }

@@ -1,20 +1,22 @@
 package com.example.weathertracker.ui.screen
 
+import android.os.Build
 import androidx.annotation.DrawableRes
+import androidx.annotation.RequiresApi
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -23,22 +25,22 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.weathertracker.R
-import com.example.weathertracker.remote.data.Condition
-import com.example.weathertracker.remote.data.Current
-import com.example.weathertracker.remote.data.Location
+import com.example.weathertracker.remote.data.Forecastday
 import com.example.weathertracker.remote.data.WeatherData
 
 // composable for displaying whole success screen
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun SuccessScreen(
     modifier: Modifier = Modifier,
@@ -50,23 +52,44 @@ fun SuccessScreen(
         CityName(weatherData = weatherData)
         CurrentWeatherCard(
             weatherData = weatherData,
-            modifier = Modifier.weight(1f)
+            //modifier = Modifier.weight(2f)
         )
+        Column(
+            modifier = Modifier.weight(1f)
+        ) {
+            LazyColumn {
+                item {
+                    NextDayWeatherForecastDisplay(nextDayForecastData = weatherData.forecast.forecastday[1])
+                }
+                item {
+                    NextDayWeatherForecastDisplay(nextDayForecastData = weatherData.forecast.forecastday[2])
+                }
+            }
+        }
     }
 }
 
 // displaying city name
 @Composable
-fun CityName(
+private fun CityName(
     weatherData: WeatherData
 ) {
     Row(
-        modifier = Modifier.padding(start = 8.dp)
+        modifier = Modifier.padding(start = 8.dp, top = 16.dp)
     ) {
         Image(
             painter = painterResource(id = R.drawable.location),
             contentDescription = "location",
-            modifier = Modifier.size(40.dp).align(Alignment.CenterVertically)
+            modifier = Modifier
+                .size(40.dp)
+                .align(Alignment.CenterVertically),
+            colorFilter = ColorFilter.tint(
+                if (isSystemInDarkTheme()) {
+                    Color.White
+                } else {
+                    Color.Black
+                }
+            )
         )
         Spacer(modifier = Modifier.width(4.dp))
         Text(
@@ -79,23 +102,23 @@ fun CityName(
 
 // displaying current weather information
 @Composable
-fun CurrentWeatherCard(
+private fun CurrentWeatherCard(
     weatherData: WeatherData,
     modifier: Modifier = Modifier
 ) {
     Card(
         modifier = modifier
-            .fillMaxSize()
+            .fillMaxHeight(0.64F)
             .padding(top = 4.dp, start = 16.dp, end = 16.dp, bottom = 16.dp),
         colors = CardDefaults.cardColors(
-            MaterialTheme.colorScheme.primaryContainer
+            MaterialTheme.colorScheme.secondaryContainer
         )
     ) {
         Column(
             modifier = Modifier.padding(4.dp)
         ) {
             Row(
-                modifier = Modifier.weight(0.4f),
+                modifier = Modifier.weight(0.5f),
                 verticalAlignment = Alignment.Top
             ) {
                 AsyncImage(
@@ -116,29 +139,35 @@ fun CurrentWeatherCard(
                     modifier = Modifier.weight(1f)
                 )
             }
-            ExtraInfo(
-                weatherData = weatherData,
-                modifier = Modifier
-                    //.weight(1f)
-                    .fillMaxWidth()
-            )
-            HorizontalDivider(
-                //modifier = Modifier.weight(1f)
-            )
-            TodayWeatherForecast(
+            Column(
                 modifier = Modifier.weight(1f)
-            )
-            WeatherDetail(
-                weatherData = weatherData,
-                //modifier = Modifier.weight(1f)
-            )
+            ) {
+                ExtraInfo(
+                    weatherData = weatherData,
+                    modifier = Modifier
+                        //.weight(1f)
+                        .fillMaxWidth()
+                )
+                HorizontalDivider(
+                    //modifier = Modifier.weight(1f)
+                )
+                TodayWeatherForecast(
+                    modifier = Modifier.padding(top = 8.dp),
+                    todayForecast = weatherData.forecast.forecastday[0]
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                WeatherDetail(
+                    weatherData = weatherData,
+                    //modifier = Modifier.weight(1f)
+                )
+            }
         }
     }
 }
 
 // displaying weather details present at the bottom of CurrentWeatherCard
 @Composable
-fun WeatherDetail(
+private fun WeatherDetail(
     modifier: Modifier = Modifier,
     weatherData: WeatherData
 ) {
@@ -164,13 +193,13 @@ fun WeatherDetail(
 
 // item present in weather detail which is located at the bottom of CurrentWeatherCard
 @Composable
-fun WeatherDetailItem(
+private fun WeatherDetailItem(
     @DrawableRes image: Int,
     value: String,
     modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = modifier.padding(4.dp),
+        modifier = modifier.padding(top = 4.dp, start = 4.dp, end = 4.dp),
         colors = CardDefaults.cardColors(
             MaterialTheme.colorScheme.tertiaryContainer
         )
@@ -195,22 +224,19 @@ fun WeatherDetailItem(
 
 // We will be displaying Current day's weather forecast in this
 @Composable
-fun TodayWeatherForecast(
-    modifier: Modifier = Modifier
+private fun TodayWeatherForecast(
+    modifier: Modifier = Modifier,
+    todayForecast: Forecastday
 ) {
-    LazyRow(
-        modifier = modifier.padding(16.dp),
-        //horizontalArrangement = Arrangement.Center
-    ) {
-        item {
-            Text(text = "Here we will display weather forecast")
-        }
-    }
+    TodayWeatherForecastDisplay(
+        modifier = modifier,
+        todayForecast = todayForecast
+    )
 }
 
 // Some more weather information just after the weather image and current temperature
 @Composable
-fun ExtraInfo(
+private fun ExtraInfo(
     weatherData: WeatherData,
     modifier: Modifier = Modifier
 ) {
@@ -219,7 +245,7 @@ fun ExtraInfo(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         val date = weatherData.location.localtime.substring(0..9)
-        val realTempFeel = weatherData.current.feelslike_c.toString().plus(" " + stringResource(id = R.string.degree_celcius))
+        val realTempFeel = weatherData.current.feelslike_c.toString().plus(" " + stringResource(id = R.string.degree_celsius))
         ExtraInfoItem(
             detail = R.string.date,
             value = date
@@ -237,7 +263,7 @@ fun ExtraInfo(
 
 // item for extra info
 @Composable
-fun ExtraInfoItem(
+private fun ExtraInfoItem(
     @StringRes detail: Int,
     value: String
 ) {
@@ -259,7 +285,7 @@ fun ExtraInfoItem(
 
 // It displays the current temperature
 @Composable
-fun TempratureData(
+private fun TempratureData(
     weatherData: WeatherData,
     modifier: Modifier = Modifier
 ) {
@@ -280,7 +306,7 @@ fun TempratureData(
                     .align(Alignment.CenterVertically)
             )
             Text(
-                text = stringResource(id = R.string.degree_celcius),
+                text = stringResource(id = R.string.degree_celsius),
                 fontSize = 40.sp,
                 modifier = Modifier.padding(top = 4.dp, bottom = 4.dp, end = 4.dp)
             )
@@ -295,44 +321,4 @@ fun TempratureData(
                 .align(Alignment.CenterHorizontally)
         )
     }
-}
-
-// dummy weather data object to use preview
-val weatherData = WeatherData(
-    current = Current(
-        condition = Condition(
-            icon = "//cdn.weatherapi.com/weather/64x64/day/176.png",
-            text = "Patchy rain nearby"
-        ),
-        feelslike_c = 21.7,
-        humidity = 54,
-        vis_km = 10.0,
-        last_updated = "2024-07-25 14:30",
-        temp_c = 21.7,
-        wind_kph = 7.2,
-        uv = 5.0,
-        precip_mm = 0.01
-    ),
-    location = Location(
-        name = "Delhi",
-        region = "Ontario",
-        country = "Canada",
-        lat = 42.85,
-        lon= -80.5,
-        tz_id = "America/Toronto",
-        localtime_epoch = 1721932330,
-        localtime = "2024-07-25 14:32"
-    )
-)
-
-@Preview
-@Composable
-fun CurrentWeatherCardPreview() {
-    CurrentWeatherCard(weatherData = weatherData)
-}
-
-@Preview(showBackground = true)
-@Composable
-fun CityNamePreview() {
-    CityName(weatherData = weatherData)
 }

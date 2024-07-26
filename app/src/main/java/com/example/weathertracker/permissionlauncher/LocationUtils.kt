@@ -32,8 +32,8 @@ class LocationUtils (
             override fun onLocationResult(newLocation: LocationResult) {
                 super.onLocationResult(newLocation)
                 newLocation.lastLocation?.let {
-                    val roundedLat = String.format(Locale.getDefault(), "%.3f", it.latitude).toDouble()
-                    val roundedLong = String.format(Locale.getDefault(), "%.3f", it.longitude).toDouble()
+                    val roundedLat = String.format(Locale.getDefault(), "%.4f", it.latitude).toDouble()
+                    val roundedLong = String.format(Locale.getDefault(), "%.4f", it.longitude).toDouble()
                     val newLocationData = Location(latitude = roundedLat, longitude = roundedLong)
                     //Log.d("Updating Location", newLocationData.toString())
                     locationList.add(newLocationData)
