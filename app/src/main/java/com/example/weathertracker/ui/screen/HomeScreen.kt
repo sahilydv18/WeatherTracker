@@ -40,6 +40,7 @@ fun HomeScreen(
         weatherViewModel.getWeatherData(BuildConfig.API_KEY, latAndLong)
     }
 
+    // added animation
     AnimatedContent(targetState = weatherUiState, label = "") { targetState ->
         when(targetState) {
             WeatherUiState.Error -> {
