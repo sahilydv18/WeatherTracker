@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -31,12 +30,20 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.weathertracker.R
+import com.example.weathertracker.remote.data.Condition
+import com.example.weathertracker.remote.data.Current
+import com.example.weathertracker.remote.data.Day
+import com.example.weathertracker.remote.data.Forecast
+import com.example.weathertracker.remote.data.ForecastCondition
 import com.example.weathertracker.remote.data.Forecastday
+import com.example.weathertracker.remote.data.Hour
+import com.example.weathertracker.remote.data.Location
 import com.example.weathertracker.remote.data.WeatherData
 
 // composable for displaying whole success screen
@@ -46,27 +53,25 @@ fun SuccessScreen(
     modifier: Modifier = Modifier,
     weatherData: WeatherData
 ) {
-    Column(
-        modifier = modifier
-    ) {
+    Column {
         CityName(weatherData = weatherData)
-        CurrentWeatherCard(
-            weatherData = weatherData,
-            //modifier = Modifier.weight(2f)
-        )
-        Column(
-            modifier = Modifier.weight(1f)
+        LazyColumn(
+            modifier = modifier
         ) {
-            LazyColumn {
-                item {
-                    NextDayWeatherForecastDisplay(nextDayForecastData = weatherData.forecast.forecastday[1])
-                }
-                item {
-                    NextDayWeatherForecastDisplay(nextDayForecastData = weatherData.forecast.forecastday[2])
-                }
+            item {
+                CurrentWeatherCard(
+                    weatherData = weatherData,
+                )
+            }
+            item {
+                NextDayWeatherForecastDisplay(nextDayForecastData = weatherData.forecast.forecastday[1])
+            }
+            item {
+                NextDayWeatherForecastDisplay(nextDayForecastData = weatherData.forecast.forecastday[2])
             }
         }
     }
+
 }
 
 // displaying city name
@@ -108,7 +113,6 @@ private fun CurrentWeatherCard(
 ) {
     Card(
         modifier = modifier
-            .fillMaxHeight(0.64F)
             .padding(top = 4.dp, start = 16.dp, end = 16.dp, bottom = 16.dp),
         colors = CardDefaults.cardColors(
             MaterialTheme.colorScheme.secondaryContainer
@@ -118,39 +122,33 @@ private fun CurrentWeatherCard(
             modifier = Modifier.padding(4.dp)
         ) {
             Row(
-                modifier = Modifier.weight(0.5f),
-                verticalAlignment = Alignment.Top
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
-                        .data("https:${weatherData.current.condition.icon}".replace("64x64","128x128"))     // replacing 64x64 with 128x128 to get better quality image
+                        .data("https:${weatherData.current.condition.icon}".replace("64x64","128x128"))
                         .crossfade(true)
                         .build(),
                     contentDescription = weatherData.current.condition.text,
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(start = 16.dp, top = 16.dp, bottom = 16.dp)
-                        .align(Alignment.CenterVertically),
+                    placeholder = painterResource(id = R.drawable.loading_img),
                     error = painterResource(id = R.drawable.ic_broken_image),
-                    placeholder = painterResource(id = R.drawable.loading_img)
+                    modifier = Modifier
+                        .size(180.dp)
+                        .align(Alignment.CenterVertically)
                 )
+                Spacer(modifier = Modifier.weight(1f))
                 TempratureData(
                     weatherData = weatherData,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.align(Alignment.CenterVertically)
                 )
             }
-            Column(
-                modifier = Modifier.weight(1f)
-            ) {
+            Column {
                 ExtraInfo(
                     weatherData = weatherData,
                     modifier = Modifier
-                        //.weight(1f)
                         .fillMaxWidth()
                 )
-                HorizontalDivider(
-                    //modifier = Modifier.weight(1f)
-                )
+                HorizontalDivider()
                 TodayWeatherForecast(
                     modifier = Modifier.padding(top = 8.dp),
                     todayForecast = weatherData.forecast.forecastday[0]
@@ -158,7 +156,6 @@ private fun CurrentWeatherCard(
                 Spacer(modifier = Modifier.height(4.dp))
                 WeatherDetail(
                     weatherData = weatherData,
-                    //modifier = Modifier.weight(1f)
                 )
             }
         }
@@ -199,7 +196,7 @@ private fun WeatherDetailItem(
     modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = modifier.padding(top = 4.dp, start = 4.dp, end = 4.dp),
+        modifier = modifier.padding(top = 4.dp, start = 4.dp, end = 4.dp, bottom = 8.dp),
         colors = CardDefaults.cardColors(
             MaterialTheme.colorScheme.tertiaryContainer
         )
@@ -290,16 +287,12 @@ private fun TempratureData(
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier.fillMaxHeight(),
-        verticalArrangement = Arrangement.Center
+        modifier = modifier
     ) {
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            //verticalAlignment = Alignment.CenterVertically
-        ) {
+        Row {
             Text(
                 text = weatherData.current.temp_c.toString(),
-                fontSize = 64.sp,
+                fontSize = 55.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
                     .padding(start = 16.dp, top = 16.dp)
@@ -307,7 +300,7 @@ private fun TempratureData(
             )
             Text(
                 text = stringResource(id = R.string.degree_celsius),
-                fontSize = 40.sp,
+                fontSize = 30.sp,
                 modifier = Modifier.padding(top = 4.dp, bottom = 4.dp, end = 4.dp)
             )
         }
@@ -315,10 +308,71 @@ private fun TempratureData(
             text = weatherData.current.condition.text,
             fontSize = 20.sp,
             modifier = Modifier
-                //.weight(1f)
                 .fillMaxWidth()
                 .padding(start = 16.dp)
                 .align(Alignment.CenterHorizontally)
         )
     }
+}
+
+@Preview(showSystemUi = true)
+@Composable
+fun CurrentWeatherCardPreview() {
+    CurrentWeatherCard(weatherData = WeatherData(
+        Current(
+            Condition(
+                icon = "",
+                text = "Slighty Rainy"
+            ),
+            feelslike_c = 34.4,
+            humidity = 32,
+            last_updated = "2024-07-26 04:45",
+            precip_mm = 45.5,
+            temp_c = 34.3,
+            uv = 34.3,
+            vis_km = 45.3,
+            wind_kph = 9.5
+        ),
+        Forecast(
+            forecastday = listOf(
+                Forecastday(
+                    "2024-07-26",
+                    date_epoch = 3413312,
+                    day = Day(
+                        avghumidity = 22,
+                        avgtemp_c = 43.3,
+                        condition = Condition(
+                            icon = "",
+                            text = "Slighty Rainy"
+                        ),
+                        daily_chance_of_rain = 43,
+                        maxwind_kph = 34.4,
+                        totalprecip_mm = 23.2,
+                        uv = 9.8
+                    ),
+                    hour = listOf(
+                        Hour(
+                            chance_of_rain = 34,
+                            condition = ForecastCondition(
+                                icon = ""
+                            ),
+                            humidity = 34,
+                            temp_c = 43.3,
+                            time = "2024-07-26 04:45"
+                        )
+                    )
+                )
+            )
+        ),
+        Location(
+            country = "India",
+            lat = 32.4,
+            localtime = "2024-07-26 04:45",
+            localtime_epoch = 3413312,
+            lon = 45.4,
+            name = "Delhi",
+            region = "Delhi",
+            tz_id = "3241"
+        )
+    ))
 }

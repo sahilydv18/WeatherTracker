@@ -154,13 +154,13 @@ private fun ForecastWeatherDetail(
             painter = painterResource(id = icon),
             contentDescription = stringResource(id = contentDescription),
             modifier = Modifier
-                .size(36.dp)
+                .size(30.dp)
                 .align(Alignment.CenterVertically)
         )
         Spacer(modifier = Modifier.width(8.dp))
         Text(
             text = value,
-            fontSize = 20.sp,
+            fontSize = 17.sp,
             modifier = Modifier.align(Alignment.CenterVertically)
         )
     }
