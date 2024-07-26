@@ -1,8 +1,5 @@
 package com.example.weathertracker.di
 
-import android.app.Application
-import android.content.Context
-import com.example.weathertracker.permissionlauncher.LocationViewModel
 import com.example.weathertracker.remote.WeatherApi
 import com.example.weathertracker.remote.repository.WeatherRepo
 import com.example.weathertracker.remote.repository.WeatherRepoImpl
@@ -35,17 +32,5 @@ object AppModule {
     @Singleton
     fun provideWeatherRepo(weatherApi: WeatherApi): WeatherRepo {
         return WeatherRepoImpl(weatherApi)
-    }
-
-    @Provides
-    @Singleton
-    fun providesLocationViewModel(): LocationViewModel {
-        return LocationViewModel()
-    }
-
-    @Provides
-    @Singleton
-    fun provideContext(application: Application): Context {
-        return application.applicationContext
     }
 }
