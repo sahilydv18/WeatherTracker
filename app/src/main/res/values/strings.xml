@@ -16,4 +16,7 @@
     <string name="avg_temperature">Average Temperature</string>
     <string name="avg_humidity">Average humidity</string>
     <string name="max_wind">Max wind speed</string>
+    <string name="error">Error</string>
+    <string name="retry">Retry</string>
+    <string name="error_message">Please check you internet connection.</string>
 </resources>

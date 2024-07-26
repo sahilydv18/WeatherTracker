@@ -1,8 +1,8 @@
 package com.example.weathertracker.ui.screen
 
 import android.content.Context
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Text
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -19,13 +19,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HomeScreen(
     context: Context,
     goToAppSettings: () -> Unit,
     locationViewModel: LocationViewModel,
     locationUtils: LocationUtils,
-    weatherViewModel: WeatherViewModel
+    weatherViewModel: WeatherViewModel,
+    onRetryButtonClicked: () -> Unit
 ) {
     val location: LocationUi by locationViewModel.location.collectAsState()
 
@@ -42,10 +44,10 @@ fun HomeScreen(
             SuccessScreen(weatherData = weatherUiState.weatherData)
         }
         WeatherUiState.Error -> {
-            Text(text = "Error")
+            ErrorScreen(onRetryButtonClicked)
         }
         WeatherUiState.Loading -> {
-            CircularProgressIndicator()
+            LoadingScreen()
         }
     }
 
