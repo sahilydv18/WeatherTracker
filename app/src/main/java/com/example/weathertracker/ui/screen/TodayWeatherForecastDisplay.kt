@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -26,6 +27,7 @@ import coil.request.ImageRequest
 import com.example.weathertracker.R
 import com.example.weathertracker.remote.data.Forecastday
 import com.example.weathertracker.remote.data.Hour
+import java.util.Calendar
 
 // current day hour wise weather display
 @Composable
@@ -33,7 +35,14 @@ fun TodayWeatherForecastDisplay(
     modifier: Modifier = Modifier,
     todayForecast: Forecastday
 ) {
-    LazyRow(modifier) {
+    val calendar = Calendar.getInstance()
+    val currentHour = calendar.get(Calendar.HOUR_OF_DAY)
+
+    val listState = rememberLazyListState(initialFirstVisibleItemIndex = currentHour)
+    LazyRow(
+        modifier,
+        state = listState
+    ) {
         items(todayForecast.hour, key = { it.time }) {
             TodayWeatherForecastItem(item = it)
         }
