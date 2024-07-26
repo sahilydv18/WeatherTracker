@@ -3,6 +3,7 @@ package com.example.weathertracker.ui.screen
 import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -39,15 +40,19 @@ fun HomeScreen(
         weatherViewModel.getWeatherData(BuildConfig.API_KEY, latAndLong)
     }
 
-    when(weatherUiState) {
-        is WeatherUiState.Success -> {
-            SuccessScreen(weatherData = weatherUiState.weatherData)
-        }
-        WeatherUiState.Error -> {
-            ErrorScreen(onRetryButtonClicked)
-        }
-        WeatherUiState.Loading -> {
-            LoadingScreen()
+    AnimatedContent(targetState = weatherUiState, label = "") { targetState ->
+        when(targetState) {
+            WeatherUiState.Error -> {
+                ErrorScreen(onRetryButtonClicked)
+            }
+            WeatherUiState.Loading -> {
+                LoadingScreen()
+            }
+            is WeatherUiState.Success -> {
+                (weatherUiState as? WeatherUiState.Success)?.let {
+                    SuccessScreen(weatherData = it.weatherData)
+                }
+            }
         }
     }
 
