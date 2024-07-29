@@ -56,7 +56,7 @@ private fun TodayWeatherForecastItem(
     Card(
         modifier = Modifier.padding(4.dp),
         colors = CardDefaults.cardColors(
-            MaterialTheme.colorScheme.primaryContainer
+            MaterialTheme.colorScheme.secondaryContainer
         )
     ) {
         Column(

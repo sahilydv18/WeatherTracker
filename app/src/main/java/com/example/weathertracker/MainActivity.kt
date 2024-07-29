@@ -39,7 +39,9 @@ class MainActivity : ComponentActivity() {
                 val locationViewModel: LocationViewModel = viewModel()
                 val location by locationViewModel.location.collectAsState()
                 val weatherViewModel: WeatherViewModel = hiltViewModel()
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                Scaffold(
+                    modifier = Modifier.fillMaxSize()
+                ) { innerPadding ->
                     Column(
                         modifier = Modifier
                             .padding(innerPadding)

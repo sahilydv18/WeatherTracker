@@ -98,9 +98,10 @@ private fun CityName(
         )
         Spacer(modifier = Modifier.width(4.dp))
         Text(
-            text = "${weatherData.location.name}, ${weatherData.location.region}, ${weatherData.location.country}",
+            text = "${weatherData.location.name}, ${weatherData.location.region}",
             fontSize = 28.sp,
-            lineHeight = 32.sp
+            lineHeight = 32.sp,
+            modifier = Modifier.align(Alignment.CenterVertically)
         )
     }
 }
